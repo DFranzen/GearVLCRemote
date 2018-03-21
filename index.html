@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width,user-scalable=no">
+	<title>Circular UI</title>
+	<link rel="stylesheet" href="lib/tau/wearable/theme/default/tau.min.css">
+	<link rel="stylesheet" media="all and (-tizen-geometric-shape: circle)" href="lib/tau/wearable/theme/default/tau.circle.min.css">
+	<!-- load theme file for your application -->
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+	<div class="ui-page ui-page-active" id="main">
+		<header class="ui-header viewServer">
+			<h2 class="ui-title" id="serverName">Server settings</h2>
+		</header>
+		<div class="ui-content viewServer" id="serverForm">
+			<div>IP</div>
+			<input type="text" name="ip" id="inputIP"></input>
+			<div>Password</div>
+			<input type="text" name="password" id="inputPassword"></input>
+			<button class="mybutton" id="btnGo">
+		    	Go
+			</button>
+		</div>
+		<header class="ui-header viewRemote">
+			<h2 class="ui-title" id="serverName">VLC remote</h2>
+			<div id="serverIP">0.0.0.0</div>
+		</header>
+		<div class="ui-content viewRemote">
+			<p id="whatson">-- </p>
+			<button class="mybutton" id="btn1">
+				<img src="/res/play.png" id="play"/>
+				<img src="/res/pause.png" id="pause"/>			
+			</button>
+			<button class="mybutton" id="btn2">
+		    	<img src="/res/forward.png" id="forward"/>
+			</button>	
+			<button class="mybutton" id="btn3">
+		    	<img src="/res/rewind.png" id="rewind"/>
+			</button>
+		</div>
+	</div>
+	
+	
+	<script src="js/circularToolBar.js"></script>
+	<script src="js/vlc.js"></script>
+	<script type="text/javascript" src="lib/tau/wearable/js/tau.min.js"></script>
+	<script src="app.js"></script>
+	<script src="lowBatteryCheck.js"></script>
+</body>
+</html>
