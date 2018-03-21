@@ -40,6 +40,8 @@ var app = {
     	}
     },
     init: function () {
+    	
+    	//Load 
     	var lastIP = localStorage.getItem("lastIP");
     	var lastPassword = localStorage.getItem("lastPassword");
     	if (lastIP !== null) {
@@ -50,9 +52,21 @@ var app = {
     	}
     	window.addEventListener("tizenhwkey", function (ev) {
     		if (ev.keyName === "back") {
-    			app.back();
+    			app.back(ev);
     		}
     	});
+    	//Init remote View
+    	setPosition("btn1", 0);
+    	setPosition("btn2", 1);
+    	setPosition("btn3", -1);
+    	document.getElementById("btn3").addEventListener("click", function(){vlc.makeRequest("command=seek&val=-10S");});
+    	document.getElementById("btn2").addEventListener("click", function(){vlc.makeRequest("command=seek&val=%2B10S");});
+    	document.getElementById("btn1").addEventListener("click", function(){vlc.makeRequest("command=pl_pause");});
+    	
+    	//Init Server view 
+    	setPosition("btnGo", 0);
+    	document.getElementById("btnGo").addEventListener("click", function(){ app.show("remote"); });
+		
     	app.show("server");
     },
     show: function(view) {
@@ -73,13 +87,7 @@ var app = {
     		localStorage.setItem("lastIP", vlc.serverIP);
     		localStorage.setItem("lastPassword", vlc.password);
     		
-    		setPosition("btn1", 0);
-        	document.getElementById("btn1").addEventListener("click", function(){vlc.makeRequest("command=pl_pause");});
-        	setPosition("btn2", 1);
-        	document.getElementById("btn2").addEventListener("click", function(){vlc.makeRequest("command=seek&val=%2B10S");});
-        	setPosition("btn3", -1);
-        	document.getElementById("btn3").addEventListener("click", function(){vlc.makeRequest("command=seek&val=-10S");});
-        	vlc.getStatus();
+    		vlc.getStatus();
         	app.back=function(ev) {app.show("server"); ev.stopPropagation();};
     	} else if (view==="server") {
     		divs=document.getElementsByClassName("viewRemote");
@@ -91,8 +99,6 @@ var app = {
     			divs[i].style.display="block";
     		}
     		app.view=view;
-    		setPosition("btnGo", 0);
-        	document.getElementById("btnGo").addEventListener("click", function(){ app.show("remote"); });
     		app.back = function() {};
     	}
     }
