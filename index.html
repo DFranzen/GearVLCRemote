@@ -14,10 +14,18 @@
 			<h2 class="ui-title" id="serverName">Server settings</h2>
 		</header>
 		<div class="ui-content viewServer" id="serverForm">
+			<div>Name</div>
+			<input type="text" name="ip" id="inputName"></input>
+			
 			<div>IP</div>
 			<input type="text" name="ip" id="inputIP"></input>
+			
+			<div>Port</div>
+			<input type="text" name="ip" id="inputPort" value="8080"></input>
+			
 			<div>Password</div>
 			<input type="text" name="password" id="inputPassword"></input>
+			
 			<button class="mybutton" id="btnGo">
 		    	Go
 			</button>
@@ -44,7 +52,15 @@
 			<div id="serverIP">0.0.0.0</div>
 		</header>
 		<div class="ui-content viewRemote">
-			<p id="whatson">-- </p>
+			<div class="scrollLeft"><p id="whatson">--</p> </div>
+			<div id="playProgressBG"></div>
+			<div id="playProgress"></div>
+			<div id="seek"></div>
+			<div id="length"></div>
+			<div id="volBG"></div>
+			<div id="volLow"></div>
+			<div id="volMid"></div>
+			<div id="volHigh"></div>
 			<button class="mybutton" id="btn1">
 				<img src="/res/play.png" id="play"/>
 				<img src="/res/pause.png" id="pause"/>			

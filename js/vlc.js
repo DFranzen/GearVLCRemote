@@ -13,6 +13,38 @@ var vlc = {
 		vlc.serverList = JSON.parse(localStorage.getItem("serverList")) || [];
 		console.log("serverList: "+vlc.serverList.length);
 	},
+	incVol: function() {
+		if (vlc.volume >= 499 ) {
+			vlc.makeRequest('command=volume&val=512',
+					null, //onSuccess
+					vlc.onDisconnect,  //onErrorCode
+					vlc.onDisconnect,  //onTimeout
+					vlc.onDisconnect   //onConnError
+			);
+		}
+		vlc.makeRequest('command=volume&val=%2B13',
+				null, //onSuccess
+				vlc.onDisconnect,  //onErrorCode
+				vlc.onDisconnect,  //onTimeout
+				vlc.onDisconnect   //onConnError
+		);
+	},
+	decVol: function() {
+		if (vlc.volume <= 5) {
+			vlc.makeRequest('command=volume&val=0',
+					null, //onSuccess
+					vlc.onDisconnect,  //onErrorCode
+					vlc.onDisconnect,  //onTimeout
+					vlc.onDisconnect   //onConnError
+			);
+		}
+		vlc.makeRequest('command=volume&val=-13',
+				null, //onSuccess
+				vlc.onDisconnect,  //onErrorCode
+				vlc.onDisconnect,  //onTimeout
+				vlc.onDisconnect   //onConnError
+		);
+	},
 	makeRequest: function (request, handlerSuccess, handlerErrorCode, handlerTimeout, handlerConnError) {
 		request = request || '';
 		handlerSuccess= handlerSuccess || function() {};
@@ -27,20 +59,16 @@ var vlc = {
 				if (xhr.status === 200) {
 					if (xhr.responseText) {
 						var res    = JSON.parse(xhr.responseText);
-						var title  = res.information || '--';
-						title  = title.category || '--';
-						title  = title.meta || '--';
+						var title  = res.information || {};
+						title  = title.category || {};
+						title  = title.meta || {};
 						title  = title.filename || '--';
-						vlc.title = title;
-						vlc.status = res.state.toLowerCase();
-						vlc.volume = res.volume || 0;
-						vlc.volume = (vlc.volume / 512) * 200;
-						vlc.volume = (vlc.volume > 200) ? 200 : vlc.volume;
-						vlc.volume = Math.round(vlc.volume);
-						vlc.length = res.length || 0;
-						vlc.seek   = res.time || 0;
-						vlc.seek   = (vlc.seek / vlc.length) * 100;
-						vlc.seek   = Math.round(vlc.seek);
+						vlc.title    = title;
+						vlc.status   = res.state.toLowerCase();
+						vlc.volume   = res.volume || 0;
+						vlc.length   = res.length || 0;
+						vlc.seek     = res.time || 0;
+						vlc.progress = Math.round(vlc.seek *100 / vlc.length);
 						handlerSuccess(xhr);
 						app.updateView();
 					} else {
@@ -67,6 +95,8 @@ var vlc = {
 		xhr.send(null);
 	},
 	connect: function(index) {
+		if (vlc.connecting) {return; }
+		vlc.connecting = true;
 		vlc.serverIP   = vlc.serverList[index].serverIP;
 		vlc.serverPort = vlc.serverList[index].serverPort;
 		vlc.serverName = vlc.serverList[index].serverName;
@@ -80,15 +110,19 @@ var vlc = {
 					vlc.watcher=null;
 				}
 	    		vlc.watcher=window.setInterval(vlc.updateStatus, 1000);
+	    		vlc.connecting = false;
 			}, 
 			function(xhr) {
 				app.showMessage("Could not connect to server: Error code " + xhr.status.toString());
+				vlc.connecting = false;
 			},
 			function() {
 				app.showMessage("No response from server " + vlc.serverIP);
+				vlc.connecting = false;
 			},
 			function() {
 				app.showMessage("Failed to connect");
+				vlc.connecting = false;			
 			}
 		);
 	},
@@ -104,6 +138,35 @@ var vlc = {
 			app.back();
 		}
 		app.showMessage("Server disconnected");
+	},
+	testServer: function(ip,port,handlerSuccess,handlerError) {
+		handlerSuccess= handlerSuccess || function() {};
+		handlerError  = handlerError   || function() {};
+		
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://' + ip + ':' + port + '/requests/status.json', true);
+		xhr.timeout = 12000;
+		var handler = function() {
+			var success = false;
+			if ( (xhr.status < 300) && (xhr.status < 300) ) {
+				success = true;
+			}
+			if ( xhr.status === 401 ) {
+				console.log("401 received");
+				success = true;
+			}
+			console.log("Status "+xhr.status);
+			if (success) {
+				console.log("executing Success");
+				handlerSuccess();
+			} else {
+				console.log("executing Error");
+				handlerError();
+			}
+		};
+		xhr.onerror = xhr.onload = handler;
+		xhr.ontimeout = handlerError;
+		xhr.send();
 	},
 	updateStatus: function() {
 		vlc.makeRequest("",

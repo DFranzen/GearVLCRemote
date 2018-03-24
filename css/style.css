@@ -73,3 +73,88 @@ img#rewind {
     font-size:smaller;
     margin-top: -5px;
 }
+
+#playProgress {
+	background-color: red;
+	position: absolute;
+	top: 70%;
+	height: 5px;
+	left: 15%;
+	right: 15%;
+}
+
+#playProgressBG {
+	background-color: white;
+	position: absolute;
+	top: 70%;
+	height: 1px;
+	left: 15%;
+	right: 15%;
+	margin-top: 2px;
+}
+
+#seek {
+	position: absolute;
+	bottom: 31%;
+	left: 12%;
+	font-size: smaller;
+}
+
+#length {
+	position: absolute;
+	bottom: 31%;
+	right: 12%;
+	font-size: smaller;
+}
+
+#volBG {
+	position: absolute;
+	background-color: black;
+	bottom: 0px;
+	top: 0px;
+	left: 90%;
+	right: 0px;
+}
+
+#volLow {
+	position: absolute;
+	background-color: green;
+	bottom: 15%;
+	top: 45%;
+	left: 90%;
+	right: 0px;
+}
+
+#volMid {
+	position: absolute;
+	background-color: yellow;
+	bottom: 55%;
+	top: 30%;
+	left: 90%;
+	right: 0px;
+}
+
+#volHigh {
+	position: absolute;
+	background-color: red;
+	bottom: 70%;
+	top: 15%;
+	left: 90%;
+	right: 0px;
+}
+
+.scrollLeft {
+    white-space: nowrap;
+}
+
+#whatson{
+	margin-left: 10%;
+	margin-right: 15%;
+}
+
+#inputName, #inputIP, #inputPort, #inputPassword {
+	margin-left: 10%;
+	margin-right: 10%;	
+	width: 80%;
+}
+
