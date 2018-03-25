@@ -6,7 +6,7 @@ var vlc = {
 	serverIP: "",
 	serverPort: "8080",
 	serverName: "VLCTest",
-	timeoutForHTTPRequest: 12000,
+	timeoutForHTTPRequest: 4000,
 	
 	init: function() {
 		console.log("reading serverList");
@@ -89,12 +89,15 @@ var vlc = {
 		handlerConnError = handlerConnError || function() {
 				console.log('HTTP request return error');
 				//sendAppMessage('Error: Failed to connect!');
-			}; 
+			};
 		xhr.ontimeout = handlerTimeout; 
 		xhr.onerror = handlerConnError; 
 		xhr.send(null);
+		return xhr;
 	},
-	connect: function(index) {
+	connect: function(index, newServer) {
+		var xhr;
+		newServer = newServer || false;
 		if (vlc.connecting) {return; }
 		vlc.connecting = true;
 		vlc.serverIP   = vlc.serverList[index].serverIP;
@@ -102,8 +105,18 @@ var vlc = {
 		vlc.serverName = vlc.serverList[index].serverName;
 		vlc.password   = vlc.serverList[index].password;
 		
-		vlc.makeRequest("", 
+		xhr = vlc.makeRequest("", 
 			function() {
+				if (app.viewStack[app.viewStack.length-1] === "spinner") { 
+					//close viewSpinner
+					app.onback = function() {};
+					app.back(); 
+				}
+				if (newServer) {
+					//close viewServer
+					app.back();
+					newServer = false;
+				}
 				app.show("remote");
 				if (vlc.watcher) {
 					window.clearInterval(vlc.watcher);
@@ -113,18 +126,53 @@ var vlc = {
 	    		vlc.connecting = false;
 			}, 
 			function(xhr) {
+				if (app.viewStack[app.viewStack.length-1] === "spinner") {
+					app.onback = function() {};
+					app.back();
+				}
 				app.showMessage("Could not connect to server: Error code " + xhr.status.toString());
+				if (newServer) {
+					//delete candidate from serverList
+					vlc.serverList.splice(-1,1);
+					newServer = false;
+				}
 				vlc.connecting = false;
 			},
 			function() {
+				if (app.viewStack[app.viewStack.length-1] === "spinner") {
+					app.onback = function() {};
+					app.back();
+				}
 				app.showMessage("No response from server " + vlc.serverIP);
+				if (newServer) {
+					vlc.serverList.splice(-1,1);
+					newServer = false;
+				}
 				vlc.connecting = false;
 			},
 			function() {
+				if (app.viewStack[app.viewStack.length-1] === "spinner") {
+					app.onback = function() {};
+					app.back();
+				}
 				app.showMessage("Failed to connect");
+				if (newServer) {
+					vlc.serverList.splice(-1,1);
+					newServer = false;
+				}
 				vlc.connecting = false;			
 			}
 		);
+		app.abort = function() {
+			console.log("aborting");
+			xhr.abort();
+			if (newServer) {
+				vlc.serverList.splice(-1,1);
+				newServer = false;
+			}
+			app.onback = function() {};
+			vlc.connecting = false;
+		};
 	},
 	disconnect: function() {
 		if (vlc.watcher) {
@@ -148,7 +196,7 @@ var vlc = {
 		xhr.timeout = 12000;
 		var handler = function() {
 			var success = false;
-			if ( (xhr.status < 300) && (xhr.status < 300) ) {
+			if ( (xhr.status < 300) && (xhr.status >= 200) ) {
 				success = true;
 			}
 			if ( xhr.status === 401 ) {

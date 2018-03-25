@@ -10,10 +10,10 @@
 </head>
 <body>
 	<div class="ui-page ui-page-active" id="main">
-		<header class="ui-header viewServer">
+		<header class="ui-header viewServer view">
 			<h2 class="ui-title" id="serverName">Server settings</h2>
 		</header>
-		<div class="ui-content viewServer" id="serverForm">
+		<div class="ui-content viewServer view" id="serverForm">
 			<div>Name</div>
 			<input type="text" name="ip" id="inputName"></input>
 			
@@ -31,27 +31,27 @@
 			</button>
 		</div>
 		
-		<header class="ui-header viewServerList">
-			<h2 class="ui-title" id="serverCaption">Choose your server</h2>
+		<header class="ui-header viewServerList view">
+			<h2 class="ui-title" id="serverCaption">Connect to ...</h2>
 		</header>
-		<div class="ui-content viewServerList">
+		<div class="ui-content viewServerList view">
 			<ul class="ui-listview ui-snap-listview" id="serverList"  data-role="listview"></ul>
 		</div>
 		
 		 
-		<header class="ui-header viewMessage">
+		<header class="ui-header viewMessage view">
 			<h2 class="ui-title" id="serverName">Message</h2>
 		</header>
-		<div class="ui-content viewMessage">
+		<div class="ui-content viewMessage view">
 			<div id="messageContent"></div>
 		</div>
 		
 		
-		<header class="ui-header viewRemote">
+		<header class="ui-header viewRemote view">
 			<h2 class="ui-title" id="serverName">VLC remote</h2>
 			<div id="serverIP">0.0.0.0</div>
 		</header>
-		<div class="ui-content viewRemote">
+		<div class="ui-content viewRemote view">
 			<div class="scrollLeft"><p id="whatson">--</p> </div>
 			<div id="playProgressBG"></div>
 			<div id="playProgress"></div>
@@ -72,14 +72,24 @@
 		    	<img src="/res/rewind.png" id="rewind"/>
 			</button>
 		</div>
+		
+		<div class="ui-content viewSpinner view">
+			<div class="small-processing-container">
+				<div class="ui-processing"></div>
+				<div class="ui-processing-text" id="spinnerText">
+					
+				</div>
+			</div>
+		</div>
 	</div>
 	
 	
 
 	<script type="text/javascript" src="lib/tau/wearable/js/tau.min.js"></script>
-	<script src="circularToolBar.js"></script>
+	<script type="text/javascript" src="js/circle-helper.js"></script>
+	<script src="js/circularToolBar.js"></script>
 	<script src="js/vlc.js"></script>
-	<script src="app.js"></script>
-	<script src="lowBatteryCheck.js"></script>
+	<script src="js/app.js"></script>
+	<script src="js/lowBatteryCheck.js"></script>
 </body>
 </html>

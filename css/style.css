@@ -39,6 +39,10 @@ body {
 	padding: 10px;
 }
 
+.view {
+	display: none;
+}
+
 #btn1 img#play {
     height: 75%;
     width: 75%;
@@ -158,3 +162,10 @@ img#rewind {
 	width: 80%;
 }
 
+
+.small-processing-container {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate3d(-50%, -50%, 0);
+}
