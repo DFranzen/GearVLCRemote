@@ -169,3 +169,64 @@ img#rewind {
 	left: 50%;
 	-webkit-transform: translate3d(-50%, -50%, 0);
 }
+
+.advancedHidden {
+	overflow: hidden;
+	max-height: 0px;
+}
+
+.advancedShown {
+	max-height: 6em;
+}
+
+#portDesc {
+	margin-left: 10%;
+	margin-right: 10%;
+	font-size: 0.7em;
+    line-height: 1.3em;
+    margin-bottom: 0.5em;
+}
+
+#advancedTrigger {
+	display: none;
+}
+
+#advancedTrigger ~ #advanced {
+	max-height: 0em;
+	transition: max-height 0.5s ease-in-out;
+	-webkit-transition: max-height 0.5s ease-in-out;
+	overflow: hidden;
+}
+
+#advancedTrigger:checked ~ #advanced {
+	max-height: 6em;
+}
+
+#advancedTrigger ~ #advancedCaption {
+	transition: max-height 0.5s ease-in-out;
+	-webkit-transition: max-height 0.5s ease-in-out;
+	color: rgba(77,207,255,1);
+	max-height: 2em;
+	overflow:hidden;
+    margin-top: 1em;
+}
+
+#advancedTrigger:checked ~ #advancedCaption {
+	max-height: 0em;
+}
+
+#advancedTrigger ~ .arrow {
+	border: solid white;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transition: transform 0.5s ease-in-out;
+    -webkit-transition: -webkit-transform 0.5s ease-in-out;
+}
+
+#advancedTrigger:checked ~ .arrow {
+	transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}

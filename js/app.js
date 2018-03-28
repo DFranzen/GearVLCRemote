@@ -134,9 +134,8 @@ var app = {
     	vlc.init();
     	
     	//Init Server view 
-    	toolbar.setPosition("btnGo", 0);
     	document.getElementById("btnGo").addEventListener("click", app.addVLCconnection);
-		
+    	
     	document.addEventListener('rotarydetent', function(ev){app.rotate(ev);});
     	
     	app.show("serverList");

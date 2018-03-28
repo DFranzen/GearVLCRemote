@@ -20,15 +20,23 @@
 			<div>IP</div>
 			<input type="text" name="ip" id="inputIP"></input>
 			
-			<div>Port</div>
-			<input type="text" name="ip" id="inputPort" value="8080"></input>
-			
 			<div>Password</div>
 			<input type="text" name="password" id="inputPassword"></input>
 			
-			<button class="mybutton" id="btnGo">
-		    	Go
-			</button>
+			<div>
+			<input id="advancedTrigger" type="checkbox" />
+			<div id="advancedCaption">Advanced</div>
+			<div id="advanced" class="advancedHidden">
+				<div>Port</div>
+				<div id="portDesc">8080 if you have not specified --http-port</div>
+				<input type="text" name="ip" id="inputPort" value="8080"></input>
+			</div>
+			<label for="advancedTrigger" id="advancedButton" class="arrow"></label>
+			</div>
+			
+			<footer class="ui-footer ui-bottom-button">
+      			<a id="btnGo" href="#" class="ui-btn">Go</a>
+   			</footer>
 		</div>
 		
 		<header class="ui-header viewServerList view">
