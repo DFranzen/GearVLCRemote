@@ -2,15 +2,17 @@ var app; //from app.js
 
 var vlc = {
 	serverList: [],
-	password: "",
-	serverIP: "",
-	serverPort: "8080",
-	serverName: "VLCTest",
+	server: {
+		name: "VLCTest",
+		ip: "",
+		password: "",
+		port: "8080",	
+	},
 	timeoutForHTTPRequest: 4000,
 	
 	init: function() {
 		console.log("reading serverList");
-		vlc.serverList = JSON.parse(localStorage.getItem("serverList")) || [];
+		//vlc.serverList = JSON.parse(localStorage.getItem("serverList")) || [];
 		console.log("serverList: "+vlc.serverList.length);
 	},
 	incVol: function() {
@@ -47,19 +49,26 @@ var vlc = {
 	},
 	makeRequest: function (request, handlerSuccess, handlerErrorCode, handlerTimeout, handlerConnError) {
 		request = request || '';
-		handlerSuccess= handlerSuccess || function() {};
+		handlerSuccess   = handlerSuccess   || function() {};
+		handlerTimeout   = handlerTimeout   || function() {};  
+		handlerErrorCode = handlerErrorCode || function() {};
+		handlerConnError = handlerConnError || function() {};
 		
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://' + vlc.serverIP + ':' + vlc.serverPort + '/requests/status.json?' + request, true);
-			//xhr.setRequestHeader('Authorization', 'Basic ' + encode64(serverUser + ':' + serverPass));
-		xhr.setRequestHeader("Authorization", "Basic " + window.btoa(":" + vlc.password));
+		xhr.open('GET', 'http://' + vlc.server.ip + ':' + vlc.server.port + '/requests/status.json?' + request, true);
+		console.log("connecting with password " + vlc.server.password);
+		xhr.setRequestHeader("Authorization", "Basic " + window.btoa(":" + vlc.server.password));
 		xhr.timeout = vlc.timeoutForHTTPRequest;
 		xhr.onload = function() {
+			
 			if (xhr.readyState === 4) {
+				app.abort = function(){};
+				app.closeView("spinner");
 				if (xhr.status === 200) {
 					if (xhr.responseText) {
-						var res    = JSON.parse(xhr.responseText);
-						var title  = res.information || {};
+						var res    = JSON.parse(xhr.responseText),
+						    title  = res.information || {};
+						
 						title  = title.category || {};
 						title  = title.meta || {};
 						title  = title.filename || '--';
@@ -82,41 +91,41 @@ var vlc = {
 				}
 			}
 		};
-		handlerTimeout = handlerTimeout || function() {
-				console.log('HTTP request timed out');
-				//sendAppMessage('Error: Request timed out!');
-			}; 
-		handlerConnError = handlerConnError || function() {
-				console.log('HTTP request return error');
-				//sendAppMessage('Error: Failed to connect!');
-			};
-		xhr.ontimeout = handlerTimeout; 
-		xhr.onerror = handlerConnError; 
+		xhr.ontimeout = function() {
+			app.closeView("spinner");
+			console.log('HTTP request timed out');
+			handlerTimeout(xhr);
+		}; 
+		xhr.onerror = function() {
+			app.closeView("spinner");
+			console.log('HTTP request return error');
+			handlerConnError(xhr);
+		};
 		xhr.send(null);
 		return xhr;
 	},
-	connect: function(index, newServer) {
-		var xhr;
-		newServer = newServer || false;
+	connect: function(server) {
+		var xhr,id;
 		if (vlc.connecting) {return; }
+		
+		if ((typeof server) !== "object") {
+			id = server;
+			server = vlc.serverList[server];
+		} else {
+			id = server.id;
+			delete server.id;
+		}
+
+		console.log("Connecting to " + JSON.stringify(server));
+		
+		vlc.server = server;
 		vlc.connecting = true;
-		vlc.serverIP   = vlc.serverList[index].serverIP;
-		vlc.serverPort = vlc.serverList[index].serverPort;
-		vlc.serverName = vlc.serverList[index].serverName;
-		vlc.password   = vlc.serverList[index].password;
 		
 		xhr = vlc.makeRequest("", 
-			function() {
-				if (app.viewStack[app.viewStack.length-1] === "spinner") { 
-					//close viewSpinner
-					app.onback = function() {};
-					app.back(); 
-				}
-				if (newServer) {
-					//close viewServer
-					app.back();
-					newServer = false;
-				}
+			function() {  //onSuccess
+				vlc.serverList[id] = server;
+				app.writePrefs();
+				app.closeView("server");
 				app.show("remote");
 				if (vlc.watcher) {
 					window.clearInterval(vlc.watcher);
@@ -126,50 +135,21 @@ var vlc = {
 	    		vlc.connecting = false;
 			}, 
 			function(xhr) {
-				if (app.viewStack[app.viewStack.length-1] === "spinner") {
-					app.onback = function() {};
-					app.back();
-				}
 				app.showMessage("Could not connect to server: Error code " + xhr.status.toString());
-				if (newServer) {
-					//delete candidate from serverList
-					vlc.serverList.splice(-1,1);
-					newServer = false;
-				}
 				vlc.connecting = false;
 			},
 			function() {
-				if (app.viewStack[app.viewStack.length-1] === "spinner") {
-					app.onback = function() {};
-					app.back();
-				}
 				app.showMessage("No response from server " + vlc.serverIP);
-				if (newServer) {
-					vlc.serverList.splice(-1,1);
-					newServer = false;
-				}
 				vlc.connecting = false;
 			},
 			function() {
-				if (app.viewStack[app.viewStack.length-1] === "spinner") {
-					app.onback = function() {};
-					app.back();
-				}
 				app.showMessage("Failed to connect");
-				if (newServer) {
-					vlc.serverList.splice(-1,1);
-					newServer = false;
-				}
 				vlc.connecting = false;			
 			}
 		);
 		app.abort = function() {
-			console.log("aborting");
+			console.log("aborting connection");
 			xhr.abort();
-			if (newServer) {
-				vlc.serverList.splice(-1,1);
-				newServer = false;
-			}
 			app.onback = function() {};
 			vlc.connecting = false;
 		};
@@ -182,9 +162,7 @@ var vlc = {
 	},
 	onDisconnect: function() {
 		vlc.disconnect();
-		if (app.view === "remote") {
-			app.back();
-		}
+		app.closeView("remote");
 		app.showMessage("Server disconnected");
 	},
 	testServer: function(ip,port,handlerSuccess,handlerError) {

@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width,user-scalable=no">
-	<title>Circular UI</title>
+	<title>VLC Remote Gear</title>
 	<link rel="stylesheet" href="lib/tau/wearable/theme/default/tau.min.css">
 	<link rel="stylesheet" media="all and (-tizen-geometric-shape: circle)" href="lib/tau/wearable/theme/default/tau.circle.min.css">
 	<!-- load theme file for your application -->
@@ -11,7 +11,7 @@
 <body>
 	<div class="ui-page ui-page-active" id="main">
 		<header class="ui-header viewServer view">
-			<h2 class="ui-title" id="serverName">Server settings</h2>
+			<h2 class="ui-title" id="serverCaption">Server settings</h2>
 		</header>
 		<div class="ui-content viewServer view" id="serverForm">
 			<div>Name</div>
@@ -43,12 +43,12 @@
 			<h2 class="ui-title" id="serverCaption">Connect to ...</h2>
 		</header>
 		<div class="ui-content viewServerList view">
-			<ul class="ui-listview ui-snap-listview" id="serverList"  data-role="listview"></ul>
+			<ul class="ui-listview ui-snap-listview expand-list" id="serverList"  data-role="listview"></ul>
 		</div>
 		
 		 
 		<header class="ui-header viewMessage view">
-			<h2 class="ui-title" id="serverName">Message</h2>
+			<h2 class="ui-title" id="MessageCaption">Message</h2>
 		</header>
 		<div class="ui-content viewMessage view">
 			<div id="messageContent"></div>
@@ -95,6 +95,8 @@
 
 	<script type="text/javascript" src="lib/tau/wearable/js/tau.min.js"></script>
 	<script type="text/javascript" src="js/circle-helper.js"></script>
+	<script src="js/aux.js"></script>	
+	<script src="js/serverView.js"></script>
 	<script src="js/circularToolBar.js"></script>
 	<script src="js/vlc.js"></script>
 	<script src="js/app.js"></script>

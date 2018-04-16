@@ -230,3 +230,8 @@ img#rewind {
 	transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
 }
+
+.longpress {
+	background-color: #98AFC7;
+	transition: background-color 2s;
+}

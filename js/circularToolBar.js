@@ -1,4 +1,5 @@
 var toolbar = {
+	count: 0,
     setPosition: function(id,pos) {
     	var angle = 2*Math.PI/11;
     	var leftoffset = Math.sin(pos*angle);
@@ -9,5 +10,6 @@ var toolbar = {
     	var topoffset = Math.cos(pos*angle);
     	var toppos = 40+topoffset*40;
     	elem.style.top=toppos+"%";
+    	toolbar.count++;
     }
 };
