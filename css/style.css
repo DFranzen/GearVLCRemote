@@ -28,19 +28,22 @@ body {
 	color:#fff;
 }
 
-.mybutton {
+.view {
+	display: none;
+}
+
+.circButton {
 	position: absolute;
 	border-radius: 50%;
 	border: none;
-	background-color: blue;
 	width: 20%;
 	height: 20%;
 	text-align: center;
 	padding: 10px;
 }
 
-.view {
-	display: none;
+.viewRemote .circButton {
+	background-color: blue;
 }
 
 #btn1 img#play {
@@ -61,6 +64,37 @@ body {
     display: none;
 }
 
+#serverList.edit .ui-snap-listview-item {
+	border: 4px dotted rgba(77,207,255,1);
+}
+
+#serverList.edit .ui-snap-listview-item.selected {
+	background-color: rgba(158, 229, 255,1);
+}
+
+#serverList.delete .ui-snap-listview-item.selected {
+	background-color: rgba(255, 107, 107,1);
+}
+
+#serverList.delete .ui-snap-listview-item {
+	border: 4px dotted red;
+}
+
+.viewServerList .circButton {
+	background-color: rgba(77,207,255,1);
+}
+
+.viewServerList #btnEdit {
+	background-color: rgba(77,207,255,1);
+}
+
+.viewServerList #btnAdd {
+	background-color: green;
+}
+.viewServerList #btnDelete {
+	background-color: red;
+}
+
 img#forward {
     position:absolute;
     top: 3px;
@@ -71,6 +105,57 @@ img#rewind {
     position:absolute;
     top: 3px;
     left: 2px;
+}
+
+img#list_add {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    padding: 10%;
+    top: 0px;
+    left:0px;
+}
+
+img#list_delete {
+    height: 100%;
+    width: 100%;	
+    position:absolute;
+    padding: 10%;
+    top: 0px;
+    left: 0px;
+}
+img#list_edit_down, img#list_edit_up {
+    height: 100%;
+    width: 100%;	
+    position:absolute;
+    padding: 10%;
+    top: 0px;
+    left: 0px;
+}
+img#list_delete {
+    height: 100%;
+    width: 100%;	
+    position:absolute;
+    padding: 10%;
+    top: 0px;
+    left: 0px;
+}
+
+img#list_edit, img#list_edit_edit {
+    height: 100%;
+    width: 100%;
+    position:absolute;
+    top:0px;
+    left:0px;
+    padding: 15%;
+}
+
+#edtMenuBtns {
+	display: block;
+}
+
+#topMenuBtns {
+	display: none;
 }
 
 #serverIP {
@@ -200,6 +285,10 @@ img#rewind {
 
 #advancedTrigger:checked ~ #advanced {
 	max-height: 6em;
+}
+
+#serverListHeader {
+	margin-bottom: -1em;
 }
 
 #advancedTrigger ~ #advancedCaption {

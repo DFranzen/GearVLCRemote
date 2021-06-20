@@ -19,5 +19,9 @@ function secToStr(sec) {
 	return hhString + mmString + ":" + ssString;
 }
 
-HTML_getdef(document.createElement("a"));
-secToStr(2);
+function colorSetter(element,color) {
+	var that = element;
+	return function() {
+		that.children[1].style.color=color;
+	};
+}

@@ -6,7 +6,17 @@ var serverView = {
 		init: function() {
 			document.getElementById("btnGo").addEventListener("click", serverView.btnGo_onclick);
 		},
-		showNew: function() {
+		onKeyboardShow: function() {
+			const inputIDs = ['inputName', 'inputIP', 'inputPassword', 'inputPort'];
+			inputIDs.forEach(function(id) { serverView.textbox_contract(id);});
+			document.getElementById("btnGo").style.display = "none";
+		},
+		onKeyboardHide: function() {
+			const inputIDs = ['inputName', 'inputIP', 'inputPassword', 'inputPort'];
+			inputIDs.forEach(function(id) { serverView.textbox_expand(id);});
+			document.getElementById("btnGo").style.display = "block";
+		},
+		showNew: function() {	
 			serverView.id = vlc.serverList.length; //create new element
 			document.getElementById("inputIP").value = app.myip || "";
 			document.getElementById("inputName").value = "New Server";
@@ -34,5 +44,15 @@ var serverView = {
 			
 			app.showSpinner("Waiting for " + server.name + " on " + server.ip + ":" + server.port);
 			vlc.connect(server);
+		},
+		textbox_contract: function(id) {
+			document.getElementById(id).style.marginRight = "22%";
+			document.getElementById(id).style.width  = "56%";
+			document.getElementById(id).style.marginLeft  = "22%";
+		},
+		textbox_expand: function(id) {
+				document.getElementById(id).style.marginRight = "10%";
+				document.getElementById(id).style.width  = "80%";
+				document.getElementById(id).style.marginLeft  = "10%";
 		}
 };

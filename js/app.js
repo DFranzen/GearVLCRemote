@@ -8,6 +8,7 @@ var toolbar; //From circularToolBar.js
 var tau; //From tau.js
 var vlc; //From vlc.js
 var serverView; //from serverView.js
+var serverListView; // from serverListView.js
 //From aux.js:
 var HTML_getdef; 
 var secToStr;
@@ -42,14 +43,15 @@ var app = {
 		app.viewStack.pop();
 	},
 	back: function () {
-		app.closeView();
-		app.onback();
+		if (app.onback()) {
+			app.closeView();
+		}
 	},
 	currentView : function() {
 		return app.viewStack[app.viewStack.length-1];
 	},
 	
-	onback: function() {},
+	onback: function() {return true;},
 	rotate: function () {},
 	abort: function () {},
 	scroll: function(e) {
@@ -100,6 +102,7 @@ var app = {
     init: function () {
     	// get Information:
     	app.readPrefs();
+    	
     	// my IP
     	function successCallback(wifi) {
     		app.myip = wifi.ipAddress;
@@ -107,8 +110,13 @@ var app = {
 	    }
 		function errorCallback(error) {
 	        console.log("Wifi Not supported: " + error.message);
+	        app.myip="192.168.0.100";
 	    }
-	    tizen.systeminfo.getPropertyValue("WIFI_NETWORK", successCallback, errorCallback);    	
+		try {
+			tizen.systeminfo.getPropertyValue("WIFI_NETWORK", successCallback, errorCallback);
+		} catch (err) {
+			app.myip="192.168.0.100";
+		}
     	app.fullHeight = window.innerHeight;
     	
     	//register input handlers
@@ -136,6 +144,7 @@ var app = {
     	document.getElementById("btn1").addEventListener("click", function(){vlc.makeRequest("command=pl_pause");});
     	
     	//Init modules
+    	serverListView.init();
     	serverView.init();
     	vlc.init();
     	
@@ -160,10 +169,10 @@ var app = {
     	}
     },
     onKeybordShow: function() {
-    	document.getElementById("btnGo").style.display = "none";
+    	serverView.onKeyboardShow();
     },
     onKeybordHide: function() {
-    	document.getElementById("btnGo").style.display = "block";
+    	serverView.onKeyboardHide();
     },
     hideView: function (view) {
     	var i,
@@ -199,7 +208,7 @@ var app = {
     	//longpress does not show
     	app.LPelem = elem;
     	elem.classList.add("longpress");
-		app.LPtimeout = window.setTimeout(function(){app.handleLongPress(e);}, 2000);
+		app.LPtimeout = window.setTimeout(function(){app.handleLongPress(e);}, 1000);
 		return;
     },
     handleLongPressCancel: function() {
@@ -230,39 +239,9 @@ var app = {
     	//Does not clear!!!
     	elem.longpress(e);
     },
-    serverList_onLP: function(id) {
-    	return function(e) {
-	    	console.log("LP executed");
-	    	console.log(HTML_getdef(e.target));
-	    	serverView.showId(id);
-    	};
-    },
-    showList: function() {
-    	if (app.snapList) {
-			app.snapList.destroy();
-		}
-		var i,li,
-			list=document.getElementById("serverList");
-		list.innerHTML = "";
-		for (i=vlc.serverList.length-1;i>=0;i--) {
-			li = document.createElement("li");
-			li.longpress = app.serverList_onLP(i);
-			li.innerHTML = '<span class="serverListName">' + vlc.serverList[i].name + '</span>' + 
-						   '<span class="serverListIP">' + vlc.serverList[i].ip + '</span>';
-			li.addEventListener("click",app.serverList_li_onClick(i));
-			li.classList.add("ui-snap-listview-item");
-			li.children[1].style.color="yellow";
-			list.appendChild(li);
-			vlc.testServer(vlc.serverList[i].ip,vlc.serverList[i].port,colorSetter(li,"green"),colorSetter(li,"red"));
-		}
-		li = document.createElement("li");
-		li.classList.add("ui-snap-listview-item");
-		li.innerHTML = 'Add new server';
-		li.addEventListener("click",function(){serverView.showNew();});
-		list.appendChild(li);
-    },
     show: function(view) {
     	app.rotate = app.scroll;
+    	app.onback = function() {return true;};
     	app.lastView = null;
     	if (view==="remote") {
     		app.hideAllViews();
@@ -270,6 +249,7 @@ var app = {
     		
     		app.onback=function() {
     			vlc.disconnect(); 
+    			return true;
     		};
     		app.rotate = function(e) {
     		    if (e.detail.direction === "CW") {
@@ -284,12 +264,7 @@ var app = {
     	} else if (view==="serverList") {
     		app.hideAllViews();
     		app.showView("viewServerList");
-    		app.rotate = app.scroll;
-    		
-    		// init list:
-    		app.showList();
-    		//app.snapList = tau.helper.SnapListStyle.create(list);
-    		//app.snapList.destroy(); //The handlers don't work here, so disable them.
+    		serverListView.show();
     	} else if (view==="message") {
     		if (app.currentView() === "message") {
     			return;
@@ -301,6 +276,7 @@ var app = {
     		app.showView("viewSpinner");
     		app.onback = function () {
     			app.abort();
+    			return true;
     		};
     	} else {
     		return;
@@ -311,16 +287,6 @@ var app = {
     	document.getElementById("spinnerText").innerHTML = msg;
     	app.onBack=function() {};
     	app.show("spinner");
-    },
-    serverList_li_onClick: function(index) {
-    	return function () {
-    		if (app.longpressExec) {
-    			return;
-    		}
-    		app.handleLongPressCancel();
-    		app.showSpinner("Waiting for " + vlc.serverList[index].name + " on " + vlc.serverList[index].ip + ":" + vlc.serverList[index].port);
-    		vlc.connect(index);
-    	};
     },
     /*value: 0-200*/
     setVol: function(value) {
@@ -370,19 +336,12 @@ var app = {
     		                var prefText = fs.read(file.fileSize);
     		                fs.close();
     		                vlc.serverList = JSON.parse(prefText).serverList || [];
-    		                app.showList();
+    		                serverListView.showList();
     		            }, function(e) {
     		                console.log("Error " + e.message);
     		            }, "UTF-8");
     		    });
     }
 };
-
-function colorSetter(element,color) {
-	var that = element;
-	return function() {
-		that.children[1].style.color=color;
-	};
-}
 
 window.addEventListener("load", app.init);
