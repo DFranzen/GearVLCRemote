@@ -88,11 +88,18 @@ body {
 	background-color: rgba(77,207,255,1);
 }
 
-.viewServerList #btnAdd {
+.viewServerList #btnAdd,
+.viewServerList #btnAddAbort {
 	background-color: green;
 }
 .viewServerList #btnDelete {
 	background-color: red;
+}
+
+#ScanInProgress {
+	color: rgb(180, 180, 180);
+	font-size: 25px;
+	background-color: rgb(40,40,40);
 }
 
 img#forward {
@@ -163,6 +170,15 @@ img#list_edit, img#list_edit_edit {
     margin-top: -5px;
 }
 
+#serverCaptionEdit {
+	display: none;		
+}
+
+#serverCaptionDelete {
+	display: none;
+	color: red;
+}
+
 #playProgress {
 	background-color: red;
 	position: absolute;
@@ -209,7 +225,25 @@ img#list_edit, img#list_edit_edit {
 	position: absolute;
 	background-color: green;
 	bottom: 15%;
-	top: 45%;
+	top: 50%;
+	left: 90%;
+	right: 0px;
+}
+
+#vol125 {
+	position: absolute;
+	background-color: white;
+	bottom: 60%;
+	height: 2px;
+	left: 90%;
+	right: 0px;
+}
+
+#vol125Label {
+	position: absolute;
+	color: white;
+	font-size: 8pt;
+	top: 32%;
 	left: 90%;
 	right: 0px;
 }
@@ -217,8 +251,8 @@ img#list_edit, img#list_edit_edit {
 #volMid {
 	position: absolute;
 	background-color: yellow;
-	bottom: 55%;
-	top: 30%;
+	bottom: 50%;
+	top: 55%;
 	left: 90%;
 	right: 0px;
 }
@@ -226,7 +260,7 @@ img#list_edit, img#list_edit_edit {
 #volHigh {
 	position: absolute;
 	background-color: red;
-	bottom: 70%;
+	bottom: 55%;
 	top: 15%;
 	left: 90%;
 	right: 0px;
@@ -247,12 +281,20 @@ img#list_edit, img#list_edit_edit {
 	width: 80%;
 }
 
+#spinnerText {
+	text-align: center;
+	position: relative;
+	left: 0%;
+	width: 100%;
+	bottom:0%;
+}
 
 .small-processing-container {
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	-webkit-transform: translate3d(-50%, -50%, 0);
+	top: 10%;
+	left: 10%;
+	right: 10%;
+	padding: 0;
 }
 
 .advancedHidden {

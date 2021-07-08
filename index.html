@@ -8,7 +8,7 @@
 	<!-- load theme file for your application -->
 	<link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body id="body">
 	<div class="ui-page ui-page-active" id="main">
 		<header class="ui-header viewServer view">
 			<h2 class="ui-title" id="serverCaption">Server settings</h2>
@@ -40,7 +40,9 @@
 		</div>
 		
 		<header class="ui-header viewServerList view" id="serverListHeader">
-			<h2 class="ui-title" id="serverCaption">Connect to ...</h2>
+			<h2 class="ui-title" id="serverCaptionSelect">Connect to ...</h2>
+			<h2 class="ui-title" id="serverCaptionEdit">Edit</h2>
+			<h2 class="ui-title" id="serverCaptionDelete">Delete</h2>
 		</header>
 		<div class="ui-content viewServerList view">
 			<ul class="ui-listview ui-snap-listview expand-list" id="serverList"  data-role="listview"></ul>
@@ -65,6 +67,11 @@
 				<button class="circButton" id="btnEditDown">
 			    	<img src="/res/down.png" id="list_edit_down"/>
 				</button>
+			</div>
+			<div id="addMenuBtns">
+				<button class="circButton" id="btnAddAbort">
+			    	<img src="/res/abort.png" id="list_add_abort"/>
+				</button>	
 			</div>
 		</div>
 		
@@ -93,6 +100,8 @@
 			<div id="volLow"></div>
 			<div id="volMid"></div>
 			<div id="volHigh"></div>
+			<div id="vol125"></div>
+			<div id="vol125Label">125%</div>
 			<button class="circButton " id="btn1">
 				<img src="/res/play.png" id="play"/>
 				<img src="/res/pause.png" id="pause"/>			

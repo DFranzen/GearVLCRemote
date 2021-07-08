@@ -10,16 +10,15 @@ var vlc; //From vlc.js
 var serverView; //from serverView.js
 var serverListView; // from serverListView.js
 //From aux.js:
-var HTML_getdef; 
 var secToStr;
 
 /* TODO:
- * Delete and edit from serverList
  * scan network
  * suspend Interval when not showing
  */
 
 /* DONE
+ * Delete and edit from serverList
  * Fix error in server list
  * clean views on startup
  * Added CSP
@@ -110,12 +109,12 @@ var app = {
 	    }
 		function errorCallback(error) {
 	        console.log("Wifi Not supported: " + error.message);
-	        app.myip="192.168.0.100";
+	        app.myip="192.168.1.100";
 	    }
 		try {
 			tizen.systeminfo.getPropertyValue("WIFI_NETWORK", successCallback, errorCallback);
 		} catch (err) {
-			app.myip="192.168.0.100";
+			app.myip="192.168.1.100";
 		}
     	app.fullHeight = window.innerHeight;
     	
@@ -292,14 +291,16 @@ var app = {
     setVol: function(value) {
     	var valueLow, valueMid, valueHigh;
     	
+    	// Remap value to a scale 0..70
     	value = (value>512) ? 70 : Math.round(value*70/512);
-    	valueLow = (value > 40) ? 40 : value;
-    	value = (value > 40) ? value - 40 : 0;
-    	valueMid = (value > 15) ? 15 : value;
-    	valueHigh = (value > 15) ? value - 15 : 0;
-    	document.getElementById("volHigh").style.top=(30-valueHigh) + "%";
-    	document.getElementById("volMid").style.top=(45-valueMid) + "%";
-    	document.getElementById("volLow").style.top=(85-valueLow) + "%";
+    	valueLow = (value > 35) ? 35 : value; //35 % display space correspond to 100% vol in VLC (green area)
+    	value = (value > 35) ? value - 35 : 0;
+    	valueMid = (value > 5) ? 5 : value;  // 5% display space correspond to 12% vol in VLC (yellow area)
+    	valueHigh = (value > 5) ? value - 5 : 0;
+    	// the top 15% and bottom 15% are not visible
+    	document.getElementById("volHigh").style.top=((100-15-35-5)-valueHigh) + "%";
+    	document.getElementById("volMid").style.top=((100-15-35)-valueMid) + "%";
+    	document.getElementById("volLow").style.top=((100-15)-valueLow) + "%";
     },
     setPlayProgress: function(value) {
     	value = Math.round(value *70/100);

@@ -16,15 +16,18 @@ var serverView = {
 			inputIDs.forEach(function(id) { serverView.textbox_expand(id);});
 			document.getElementById("btnGo").style.display = "block";
 		},
-		showNew: function() {	
+		showNew: function(ip) {
+			ip = ip || app.myip || "";
+			console.log("Creating new server with ip" + ip);
 			serverView.id = vlc.serverList.length; //create new element
-			document.getElementById("inputIP").value = app.myip || "";
+			document.getElementById("inputIP").value = ip;
 			document.getElementById("inputName").value = "New Server";
 			document.getElementById("inputPassword").value = "";
 			document.getElementById("inputPort").value = "8080";
 			app.show("server");
 		},
 		showId: function(id) {
+			console.log("Showing server " + id);
 			serverView.id = id;
 			document.getElementById("inputIP").value = vlc.serverList[id].ip;
 			document.getElementById("inputName").value = vlc.serverList[id].name;

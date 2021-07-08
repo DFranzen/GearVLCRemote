@@ -25,3 +25,10 @@ function colorSetter(element,color) {
 		that.children[1].style.color=color;
 	};
 }
+
+// Use each function once to avoid warnings due to modularity
+if (false) { 
+	colorSetter(null, null);
+	secToStr(10);
+	HTML_getdef(null);
+}
